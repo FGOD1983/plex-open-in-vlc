@@ -1,17 +1,18 @@
 /**
- * Download original files from the Plex web interface
+ * Open files in VLC from the Plex web interface
  *
- * This project is licensed under the terms of the MIT license, see https://piplongrun.github.io/plxdwnld/LICENSE.txt
+ * This project is licensed under the terms of the MIT license, see https://banrobert.github.io/plex-open-in-vlc/LICENSE.txt
  *
  * @author      Pip Longrun <pip.longrun@protonmail.com>
- * @version     0.3
- * @see         https://piplongrun.github.io/plxdwnld/
+ * @author      Robert Ban <banrobert@gmail.com>
+ * @version     0.4
+ * @see         https://banrobert.github.io/plex-open-in-vlc/
  *
  */
 "use strict";
 
-if (typeof plxDwnld === "undefined") {
-  window.plxDwnld = (function () {
+if (typeof openInVlc === "undefined") {
+  window.openInVlc = (function () {
     const self = {};
     const clientIdRegex = new RegExp("server/([a-f0-9]{40})/");
     const metadataIdRegex = new RegExp("key=%2Flibrary%2Fmetadata%2F(\\d+)");
@@ -35,28 +36,22 @@ if (typeof plxDwnld === "undefined") {
       request.send();
     };
 
-    const getUrl = function (xml) {
+    const openUrl = function (xml) {
       const partKeyNode = xml.evaluate(partKeyXpath, xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
 
       if (partKeyNode.singleNodeValue) {
-        return downloadUrl
-          .replace("{baseuri}", baseUri)
-          .replace("{partkey}", partKeyNode.singleNodeValue.textContent)
-          .replace("{token}", accessToken);
+        window.location.href =
+          "vlc://" +
+          downloadUrl
+            .replace("{baseuri}", baseUri)
+            .replace("{partkey}", partKeyNode.singleNodeValue.textContent)
+            .replace("{token}", accessToken);
       } else {
         alert("You are currently not viewing a media item.");
       }
     };
 
-    const getDownloadUrl = function (xml) {
-      window.location.href = getUrl(xml);
-    };
-
-    const openInVlc = function (xml) {
-      window.location.href = "vlc://" + getUrl(xml);
-    };
-
-    const getMetadata = function (xml, vlc) {
+    const getMetadata = function (xml) {
       const clientId = clientIdRegex.exec(window.location.href);
 
       if (clientId && clientId.length == 2) {
@@ -86,7 +81,7 @@ if (typeof plxDwnld === "undefined") {
                 .replace("{baseuri}", baseUri)
                 .replace("{id}", metadataId[1])
                 .replace("{token}", accessToken),
-              vlc ? openInVlc : getDownloadUrl
+              openUrl
             );
           } else {
             alert("You are currently not viewing a media item.");
@@ -99,11 +94,9 @@ if (typeof plxDwnld === "undefined") {
       }
     };
 
-    self.init = function (vlc) {
+    self = function () {
       if (typeof localStorage.myPlexAccessToken != "undefined") {
-        getXml(apiResourceUrl.replace("{token}", localStorage.myPlexAccessToken), function (xml) {
-          getMetadata(xml, vlc);
-        });
+        getXml(apiResourceUrl.replace("{token}", localStorage.myPlexAccessToken), getMetadata);
       } else {
         alert("You are currently not browsing or logged into a Plex web environment.");
       }
@@ -113,4 +106,4 @@ if (typeof plxDwnld === "undefined") {
   })();
 }
 
-plxDwnld.init();
+openInVlc();
