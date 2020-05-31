@@ -13,7 +13,6 @@
 
 if (typeof openInVlc === "undefined") {
   window.openInVlc = (function () {
-    const self = {};
     const clientIdRegex = new RegExp("server/([a-f0-9]{40})/");
     const metadataIdRegex = new RegExp("key=%2Flibrary%2Fmetadata%2F(\\d+)");
     const apiResourceUrl = "https://plex.tv/api/resources?includeHttps=1&X-Plex-Token={token}";
@@ -94,15 +93,13 @@ if (typeof openInVlc === "undefined") {
       }
     };
 
-    self = function () {
+    return function () {
       if (typeof localStorage.myPlexAccessToken != "undefined") {
         getXml(apiResourceUrl.replace("{token}", localStorage.myPlexAccessToken), getMetadata);
       } else {
         alert("You are currently not browsing or logged into a Plex web environment.");
       }
     };
-
-    return self;
   })();
 }
 
