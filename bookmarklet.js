@@ -15,15 +15,11 @@ if (typeof plxDwnld === "undefined") {
     const self = {};
     const clientIdRegex = new RegExp("server/([a-f0-9]{40})/");
     const metadataIdRegex = new RegExp("key=%2Flibrary%2Fmetadata%2F(\\d+)");
-    const apiResourceUrl =
-      "https://plex.tv/api/resources?includeHttps=1&X-Plex-Token={token}";
-    const apiLibraryUrl =
-      "{baseuri}/library/metadata/{id}?X-Plex-Token={token}";
+    const apiResourceUrl = "https://plex.tv/api/resources?includeHttps=1&X-Plex-Token={token}";
+    const apiLibraryUrl = "{baseuri}/library/metadata/{id}?X-Plex-Token={token}";
     const downloadUrl = "{baseuri}{partkey}?download=1&X-Plex-Token={token}";
-    const accessTokenXpath =
-      "//Device[@clientIdentifier='{clientid}']/@accessToken";
-    const baseUriXpath =
-      "//Device[@clientIdentifier='{clientid}']/Connection[@local='0']/@uri";
+    const accessTokenXpath = "//Device[@clientIdentifier='{clientid}']/@accessToken";
+    const baseUriXpath = "//Device[@clientIdentifier='{clientid}']/Connection[@local='0']/@uri";
     const partKeyXpath = "//Media/Part[1]/@key";
     let accessToken = null;
     let baseUri = null;
@@ -40,13 +36,7 @@ if (typeof plxDwnld === "undefined") {
     };
 
     const getUrl = function (xml) {
-      const partKeyNode = xml.evaluate(
-        partKeyXpath,
-        xml,
-        null,
-        XPathResult.FIRST_ORDERED_NODE_TYPE,
-        null
-      );
+      const partKeyNode = xml.evaluate(partKeyXpath, xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
 
       if (partKeyNode.singleNodeValue) {
         return downloadUrl
@@ -111,16 +101,11 @@ if (typeof plxDwnld === "undefined") {
 
     self.init = function (vlc) {
       if (typeof localStorage.myPlexAccessToken != "undefined") {
-        getXml(
-          apiResourceUrl.replace("{token}", localStorage.myPlexAccessToken),
-          function (xml) {
-            getMetadata(xml, vlc);
-          }
-        );
+        getXml(apiResourceUrl.replace("{token}", localStorage.myPlexAccessToken), function (xml) {
+          getMetadata(xml, vlc);
+        });
       } else {
-        alert(
-          "You are currently not browsing or logged into a Plex web environment."
-        );
+        alert("You are currently not browsing or logged into a Plex web environment.");
       }
     };
 
