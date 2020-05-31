@@ -1,5 +1,5 @@
 /**
- * Open files in VLC from the Plex web interface
+ * Open original file in VLC from the Plex web interface
  *
  * This project is licensed under the terms of the MIT license, see https://banrobert.github.io/plex-open-in-vlc/LICENSE.txt
  *
